@@ -5,35 +5,6 @@
 }
 
 
-.bestselle{
-    height: 280px;
-    position: relative;
-    display: block;
-}
-.bestselle:first-child{
-    margin-top: 25px;
-    margin-bottom: 3px;
-}
-.bestselle .bestselle-content{
-    position: absolute;
-    top: 80%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    color:#09bfff; /* Adjust as needed */
-    padding: 10px; /* Optional: adjust padding as needed */
-}
-@media (min-width: 768px) {
-    .bestselle-content {
-        display: block;
-    }
-}
-
-@media (max-width: 767px) {
-    .bestselle-content {
-        display: none;
-    }
-}
 
 .slider_1 {
     display: block;
