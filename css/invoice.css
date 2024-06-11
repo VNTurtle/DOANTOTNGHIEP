@@ -1,0 +1,407 @@
+
+.product-tab {
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.product-tab .tabs-title {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-right: -5px;
+    margin-left: -5px;
+    margin-bottom: 20px;
+}
+
+.product-tab .tab-link {
+    cursor: pointer;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.product-tab .tab-link h3 {
+    color: #007bff;
+    margin: 0;
+    font-size: 14px;
+    text-transform: uppercase;
+    padding: 10px 40px;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    -webkit-transition: all 0.2s ease-in;
+    -moz-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+}
+.product-tab .tab-link h3:hover {
+    background: rgb(61, 106, 255);
+    box-shadow: 0 0 30px 5px rgba(0, 142, 236, 0.815);
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+    color: #fff;
+}
+
+
+.product-tab .tab-link.active h3, .product-tab .tab-link:hover h3 {
+    background: rgb(61, 106, 255);
+    box-shadow: 0 0 30px 5px rgba(0, 142, 236, 0.815);
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+    color: #fff;
+}
+.product-tab .tab-link.active h3, .product-tab .tab-link:hover::before h3{
+    -webkit-animation: sh02 0.5s 0s linear;
+    -moz-animation: sh02 0.5s 0s linear;
+    animation: sh02 0.5s 0s linear;
+}
+
+.product-tab .tab-float {
+    background-color: #fff;
+    border: 1px solid #007bff;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.product-tab .tab-content {
+    opacity: 0;
+    visibility: hidden;
+    height: 0;
+    overflow: hidden;
+}
+
+.product-tab .tab-content.active {
+    opacity: 1;
+    visibility: visible;
+    height: auto;
+}
+
+.product-tab .product_getcontent {
+    position: relative;
+}
+
+.bread-crumb{
+    min-height: 200px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+.bread-crumb .title-bread-crumb {
+    text-align: center;
+    font-size: 35px;
+    color: #fff;
+    font-weight: 600;
+}
+
+.breadcrumb {
+    margin: 0;
+    font-size: 14px;
+    padding: 15px 10px;
+    border-radius: 0;
+    font-weight: 400;
+    line-height: 24px;
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+}
+
+.breadcrumb li {
+    display: inline;
+}
+.breadcrumb li>a{
+    color: #fff;
+}
+.breadcrumb li>a>span{
+    color: #fff;
+}
+
+.breadcrumb li span{
+    color: #fff;
+    display: inline;
+}
+
+.breadcrumb li .mr_lr {
+    padding: 0px 3px;
+    color: #fff;
+}
+
+.breadcrumb li span {
+    display: inline;
+    color: #fff;
+}
+
+.breadcrumb li strong{
+    color: #76a713;
+    font-weight: 400;
+}
+
+.breadcrumb li strong span{
+    color: #76a713;
+}
+
+.bodywrap{
+    padding-bottom: 30px;
+}
+
+
+.invoice-page {
+    padding: 10px;
+    background: #fff;
+    border-radius: 5px;
+}
+
+.invoice-page .invoice-header-info {
+    display: flex;
+    padding: 7px 0;
+    border: solid 1px #ebebeb;
+    border-bottom: none;
+    font-weight: bold;
+}
+
+.invoice-page .invoice-header-info div:nth-child(1) {
+    width: 60%;
+    text-align: left;
+    padding-left: 10px;
+}
+
+.invoice-page .invoice-header-info div:nth-child(2) {
+    width: 20%;
+    text-align: center;
+}
+
+.invoice-page .invoice-header-info div:nth-child(3) {
+    width: 20%;
+    text-align: center;
+}
+
+.invoice-page .invoice-body {
+    border: solid 1px #ebebeb;
+}
+
+.invoice-page .invoice-body .invoice-body-info {
+    padding: 10px 15px 10px 10px;
+    vertical-align: top;
+    display: flex;
+    border: solid 1px #007bff;
+}
+.invoice-page .invoice-body .invoice-body-ajax{
+    margin-top: 2px;
+}
+.invoice-page .invoice-body .invoice-body-info .invoice-code{
+    width: 60%;
+    color: #007bff;
+    font-weight: 600;  
+}
+
+.invoice-page .invoice-body .invoice-body-info .invoice-code::before{
+    content: "";
+    position: relative;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 14px 10px 0 10px;
+    border-color: #007bff transparent transparent transparent;
+    display: inline-block;
+    margin-left: 2px;
+    margin-top: -6px;
+    transition: 0.5s;  
+}
+
+.invoice-page .invoice-body .invoice-body-info .invoice-code.show::before{
+    transform: rotate(180deg);
+}
+
+.invoice-page .invoice-body .invoice-body-info .invoice-date{
+    width: 20%;
+    color: #007bff;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.invoice-page .invoice-body .invoice-body-info .invoice-stock{
+    width: 20%;
+    color: #007bff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.invoice-page .invoice-body .ajaxcart-row:first-child {
+    border-top: none;
+}
+
+.invoice-page .invoice-body .ajaxcart-row {
+    padding: 10px 0;
+    border-top: solid 1px #ebebeb;
+}
+
+.invoice-page .invoice-body .ajaxcart-row .invoice-product {
+    width: 100%;
+    height: 120px;
+    display: flex;
+    align-items: center;
+}
+
+.invoice-page .invoice-body .invoice-image {
+    width: 110px ;
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+}
+
+.invoice-page .invoice-body .invoice-image img{
+    max-width: 100%;
+    max-height: 100%;
+}
+
+
+
+.invoice-page .invoice-body .invoice-info {
+    padding: 10px 15px 10px 10px;
+    vertical-align: top;
+    display: flex;
+    width: 100%;
+}
+
+.invoice-page .invoice-body .invoice-info .invoice-name {
+    width: 60%;
+    margin-bottom: 5px;
+}
+
+.invoice-page .invoice-body .invoice-info .invoice-name a {
+    margin-bottom: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #000;
+    line-height: 18px;
+    display: block;
+}
+
+.invoice-page .invoice-body .invoice-info .variant-title {
+    display: block;
+    font-size: 12px;
+}
+
+.invoice-page .invoice-body .grid {
+    width: 16%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.invoice-page .invoice-body .grid2 {
+    width: 24%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+.invoice-page .invoice-body .grid2 .invoice-prices .invoice-price {
+    font-weight: bold;
+    display: block;
+    font-size: 14px;
+    color: #007bff;
+}
+
+.invoice-page .invoice-body .invoice-select .stock-title {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.invoice-page .invoice-body .invoice-select .stock {
+    font-size: 13px;
+    text-align: center;
+    color: #007bff;
+}
+.invoice-page .invoice-body .price-title{
+    font-size: 13px;
+    text-align: center;
+    color: #007bff;
+}
+
+.invoice-body-detail {
+    display: none;
+}
+
+.invoice-body-detail.show {
+    display: block;
+    transition: 0.3s ease-in;
+}
+
+@media (max-width: 991px) {
+    .bread-crumb .title-bread-crumb {
+    font-size: 25px;
+    }
+}
+
+@media (max-width:376px) {
+    
+    .invoice-page .invoice-body .invoice-image {
+        width: 80px;
+        height: 80px;
+    }
+
+    .invoice-page .invoice-body .invoice-info {
+        display: contents;
+    }
+
+    .invoice-page .invoice-body .invoice-info .invoice-name a {
+        font-size: 10px;
+    }
+
+    .invoice-page .invoice-body .invoice-select .stock-title {
+        font-size: 10px;
+    }
+
+    .invoice-page .invoice-body .price-title{
+        font-size: 10px;
+    }
+
+    .invoice-page .invoice-body .invoice-select .stock {
+        font-size: 10px;
+    }
+
+    .invoice-page .invoice-body .grid2 .invoice-prices .invoice-price {
+        font-size: 10px;
+    }
+}
+
+@media (max-width:320px) {
+    .invoice-page .invoice-header-info div:nth-child(1) {
+        font-size: 12px;
+    }
+
+    .invoice-page .invoice-header-info div:nth-child(2) {
+        font-size: 12px;
+    }
+
+    .invoice-page .invoice-header-info div:nth-child(3) {
+        font-size: 12px;
+    }
+
+    .invoice-page .invoice-body .invoice-body-info .invoice-code {
+        font-size: 10px;
+    }
+
+    .invoice-page .invoice-body .invoice-body-info .invoice-code::before {
+        border-width: 5px 5px 0 5px;
+        top: -2px;
+    }
+
+    .invoice-page .invoice-body .invoice-body-info .invoice-date {
+        font-size: 10px;
+    }
+
+    .invoice-page .invoice-body .invoice-body-info .invoice-stock {
+        font-size: 10px;
+    }
+
+}

@@ -1,50 +1,30 @@
 <?php
 require_once('lib/db.php');
 require_once('layout.php');
-
-
-// Kiểm tra trạng thái đăng nhập
-
-$parameters = []; // Các tham số truy vấn (nếu có)
-$resultType = 2; // Loại kết quả truy vấn (2: Fetch All)
-// Kết nối đến cơ sở dữ liệu và thực hiện truy vấn
-$query = "SELECT 
-b.Id,
-b.Name AS BookName, 
-b.Price, 
-b.TypeId, 
-bt.Name AS BookTypeName,
-i.Path
-FROM 
-`book` b
-JOIN 
-`Type` bt ON b.TypeId = bt.Id
-LEFT JOIN 
-`image` i ON b.Id = i.BookId
-WHERE 
-i.Id = (
-    SELECT MIN(i2.Id)
-    FROM `image` i2
-    WHERE i2.BookId = b.Id
-);
-";
-
-
-$lst_bv = DP::run_query($query, $parameters, $resultType);
-
-
-
+$userId = $_SESSION['Id'];
+$query = "SELECT c.Id AS CartId, c.UserId, b.*, c.Quantity, i.Path
+            FROM Cart c 
+            JOIN Account a ON c.UserId = a.Id 
+            JOIN Book b ON c.BookId = b.Id 
+            LEFT JOIN `image` i ON b.Id = i.BookId 
+            WHERE c.UserId = $userId AND i.Id = (
+                SELECT MIN(i2.Id)
+                FROM `image` i2
+                WHERE i2.BookId = b.Id
+            );";
+$Lst_Cart = DP::run_query($query, $parameters, $resultType);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hamster</title>
+    <title>Cart</title>
     <link rel="icon" href="img/logo-web.jpg">
     <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/cart.css">
     <link rel="stylesheet" href="vendor/bootstrap-5.3.3-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="vendor/sclick/css/slick.min.css">
@@ -239,159 +219,107 @@ $lst_bv = DP::run_query($query, $parameters, $resultType);
         </div>
     </header>
 
-    <div class="bodywrap">
-        <section class="sliderShow container-fluid">
-            <div class="row">
-                <div class="col-lg-8">
-                    <div id="carouselExample" class="carousel slide" style="margin: 0 0px 25px 12px; ">
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <img src="img/banner/bannerBk.jpg" class="d-block w-100" alt="...">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="img/hinh-nen-lamborghini-aventador-1.jpg" class="d-block w-100" alt="...">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="img/HinhCute/hinh-cute-anh-cute.jpg" class="d-block w-100" alt="...">
-                            </div>
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="col-lg-4">
-                    <!-- <canvas width="450" height="590" id="Book-index" class="3D-book-index"></canvas> -->
-                </div>
+    <div class="bodywrap" style="margin-top: 30px;">
+        <div class="cart container">
+            <div class="page-title">
+                <h1>Giỏ hàng</h1>
+                <span class="cart-number-item">(2 sản phẩm)</span>
             </div>
-
-
-        </section>
-
-
-        <section class="section-danhmuc">
-            <div class="container">
-                <div class="group-title-index">
-                    <h3 class="title">
-                        <a class="title-name" href="">Sách bán chạy
-                            <img src="img/book-icon.png" alt="">
-                        </a>
-                    </h3>
-                </div>
-                <div class="product-flash-swiper swiper-container">
-                    <button class="btn-pre btn-pre-slider"><i class='fa fa-angle-left' aria-hidden='true'></i></button>
-                    <div class="swiper-wrapper  slick-slider">
+            <div class="row cart-content">
+                <div class="col-sm-8 col-xs-12">
+                    <div class="header-cart-item">
+                        <div class="checkbox-all-book">
+                            <input id="checkbox-all-products" name=""  class="checkbox-all-cart" type="checkbox" />
+                        </div>
+                        <div>
+                            <span>
+                                "Chọn tất cả ("
+                                <span class="number-checkbox">2</span>
+                                "sản phẩm)"
+                            </span>
+                        </div>
+                        <div>
+                            Số lượng
+                        </div>
+                        <div>
+                            Thành tiền
+                        </div>
+                        <div></div>
+                    </div>
+                    <div class="book-cart-left">
                         <?php
-
-                        foreach ($lst_bv as $key => $bv) {
-                            if ($bv['TypeId'] == 7) {
+                        foreach ($Lst_Cart as $key => $cart_item) {
+                            $total_price = $cart_item['Price'] * $cart_item['Quantity'];
                         ?>
-                                <div class="swiper-slider" >
-                                    <div class="card">
-                                        <a href="Book.php?id=<?php echo $bv['Id']; ?>" class="card-img" title="<?php echo $bv['BookName']; ?>">
-                                            <img src="img/products/<?php echo $bv['Path'] ?>" alt="">
-                                        </a>
-                                        <a class="card-info" href="Book.php?id=<?php echo $bv['Id']; ?>">
-                                            <p class="text-title" title="<?php echo $bv['BookName']; ?>"><?php echo $bv['BookName']; ?> </p>
-                                        </a>
-                                        <div class="card-footer">
-                                            <span class="text-title">$<?php echo $bv['Price'] ?></span>
-                                            <div class="card-button">
-                                                <svg class="svg-icon" viewBox="0 0 20 20">
-                                                    <path d="M17.72,5.011H8.026c-0.271,0-0.49,0.219-0.49,0.489c0,0.271,0.219,0.489,0.49,0.489h8.962l-1.979,4.773H6.763L4.935,5.343C4.926,5.316,4.897,5.309,4.884,5.286c-0.011-0.024,0-0.051-0.017-0.074C4.833,5.166,4.025,4.081,2.33,3.908C2.068,3.883,1.822,4.075,1.795,4.344C1.767,4.612,1.962,4.853,2.231,4.88c1.143,0.118,1.703,0.738,1.808,0.866l1.91,5.661c0.066,0.199,0.252,0.333,0.463,0.333h8.924c0.116,0,0.22-0.053,0.308-0.128c0.027-0.023,0.042-0.048,0.063-0.076c0.026-0.034,0.063-0.058,0.08-0.099l2.384-5.75c0.062-0.151,0.046-0.323-0.045-0.458C18.036,5.092,17.883,5.011,17.72,5.011z"></path>
-                                                    <path d="M8.251,12.386c-1.023,0-1.856,0.834-1.856,1.856s0.833,1.853,1.856,1.853c1.021,0,1.853-0.83,1.853-1.853S9.273,12.386,8.251,12.386z M8.251,15.116c-0.484,0-0.877-0.393-0.877-0.874c0-0.484,0.394-0.878,0.877-0.878c0.482,0,0.875,0.394,0.875,0.878C9.126,14.724,8.733,15.116,8.251,15.116z"></path>
-                                                    <path d="M13.972,12.386c-1.022,0-1.855,0.834-1.855,1.856s0.833,1.853,1.855,1.853s1.854-0.83,1.854-1.853S14.994,12.386,13.972,12.386z M13.972,15.116c-0.484,0-0.878-0.393-0.878-0.874c0-0.484,0.394-0.878,0.878-0.878c0.482,0,0.875,0.394,0.875,0.878C14.847,14.724,14.454,15.116,13.972,15.116z"></path>
-                                                </svg>
+                            <div class="item-book-cart">
+                                <div class="checkbox-book-cart">
+                                    <input id="checkbox-book-1918" name="checkbox_book-1919" class="checkbox-add-cart" type="checkbox" data-price="<?php echo $total_price ?>"/>
+                                </div>
+                                <div class="img-book-cart">
+                                    <a class="book-image" href="">
+                                        <img src="img/products/<?php echo $cart_item['Path'] ?>" width="120" height="120" alt="">
+                                    </a>
+                                </div>
+                                <div class="group-book-info">
+                                    <div class="info-book-cart">
+                                        <div class="name-book">
+                                            <h2 class="book-name-full">
+                                                <a href=""><?php echo $cart_item['Name'] ?></a>
+                                            </h2>
+                                        </div>
+                                        <div class="price-original">
+                                            <div class="cart-price">
+                                                <span class="price"> <?php echo $cart_item['Price'] ?>0 đ</span>
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="number-book-cart">
+                                        <div class="input-number-product">
+                                            <button class="btn-num num-1">-</button>
+                                            <input type="text" name="quantity" value="<?php echo $cart_item['Quantity'] ?>" maxlength="3" class="form-control prd-quantity">
+                                            <button class="btn-num num-2">+</button>
+                                        </div>
+                                        <div class="cart-price-total">
+                                            <span class="cart-price">
+                                                <span class="price">
+                                                    <?php
+                                                    
+                                                    // In ra kết quả
+                                                    echo $total_price;
+                                                    ?>.000 đ
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="remove-cart">
+                                    <img src="img/recycle-bin_9983371.png" style="width: 22px; height: 30px;" alt="">
+                                </div>
                             </div>
+                            <div class="border-book"></div>
                         <?php
-                            }
                         }
                         ?>
                     </div>
-                    <button class="btn-next btn-next-slider"><i class='fa fa-angle-right' aria-hidden='true'></i></button>
                 </div>
-            </div>
-        </section>
-        <?php
-        foreach ($bookTypeIds as $key => $BookType) {
-        ?>
-            <!-- <section class="section-1-banner">
-                <div class="container">
-                    <a class="image-effect" href="">
-                        <img width="1920" height="500" src="img/banner/muonkiepnhansinh_resize_920x420.jpg" alt="">
-                    </a>
-                </div>
-            </section> -->
-            <section class="section-product section-product1">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-4 col-xl-3 col-sm-5 d-none d-sm-block">
-                            <!-- <canvas id="<?php echo $BookType['Name'] ?>" class="3D-booktype" height="400" width="330"></canvas> -->
+                <div class="col-sm-4 ">
+                    <div class="block-total-cart">
+                        <div class="total-cart-page">
+                            <div class="title-cart-page-left">Thành tiền</div>
+                            <div class="number-cart-page-right">
+                                <span id="total-price" class="price">0 đ</span>
+                            </div>
                         </div>
-                        <div class="col-lg-8 col-xl-9 col-sm-7">
-                            <div class="group-title-index">
-                                <h3 class="title">
-                                    <a class="title-name" href=""><?php echo $BookType['Name']  ?>
-                                        <img src="img/book-icon.png" alt="">
-                                    </a>
-                                    <span class=""></span>
-                                </h3>
-                            </div>
-                            <div class="product-flash-swiper swiper-container">
-                                <button class="btn-pre btn-pre-slider<?php echo $BookType['Id'] ?>"><i class='fa fa-angle-left' aria-hidden='true'></i></button>
-                                <div class="swiper-wrapper  slick-slider<?php echo $BookType['Id'] ?>">
-                                    <?php
-                                    foreach ($lst_bv as $key => $bv) {
-                                        if ($bv['TypeId'] == $BookType['Id']) {
-                                    ?>
-                                            <div class="swiper-slider">
-                                                <div class="card">
-                                                    <a href="Book.php?id=<?php echo $bv['Id'] ?>" class="card-img">
-                                                        <img src="img/Products/<?php echo $bv['Path'] ?>" alt="">
-                                                     </a>
-                                                    <a class="card-info" href="Book.php?id=<?php echo $bv['Id'] ?>">
-                                                        <p class="text-title"><?php echo $bv['BookName'] ?></p>
-                                                    </a>
-                                                    <div class="card-footer">
-                                                        <span class="text-title">$<?php echo $bv['Price'] ?></span>
-                                                        <div class="card-button">
-                                                            <svg class="svg-icon" viewBox="0 0 20 20">
-                                                                <path d="M17.72,5.011H8.026c-0.271,0-0.49,0.219-0.49,0.489c0,0.271,0.219,0.489,0.49,0.489h8.962l-1.979,4.773H6.763L4.935,5.343C4.926,5.316,4.897,5.309,4.884,5.286c-0.011-0.024,0-0.051-0.017-0.074C4.833,5.166,4.025,4.081,2.33,3.908C2.068,3.883,1.822,4.075,1.795,4.344C1.767,4.612,1.962,4.853,2.231,4.88c1.143,0.118,1.703,0.738,1.808,0.866l1.91,5.661c0.066,0.199,0.252,0.333,0.463,0.333h8.924c0.116,0,0.22-0.053,0.308-0.128c0.027-0.023,0.042-0.048,0.063-0.076c0.026-0.034,0.063-0.058,0.08-0.099l2.384-5.75c0.062-0.151,0.046-0.323-0.045-0.458C18.036,5.092,17.883,5.011,17.72,5.011z"></path>
-                                                                <path d="M8.251,12.386c-1.023,0-1.856,0.834-1.856,1.856s0.833,1.853,1.856,1.853c1.021,0,1.853-0.83,1.853-1.853S9.273,12.386,8.251,12.386z M8.251,15.116c-0.484,0-0.877-0.393-0.877-0.874c0-0.484,0.394-0.878,0.877-0.878c0.482,0,0.875,0.394,0.875,0.878C9.126,14.724,8.733,15.116,8.251,15.116z"></path>
-                                                                <path d="M13.972,12.386c-1.022,0-1.855,0.834-1.855,1.856s0.833,1.853,1.855,1.853s1.854-0.83,1.854-1.853S14.994,12.386,13.972,12.386z M13.972,15.116c-0.484,0-0.878-0.393-0.878-0.874c0-0.484,0.394-0.878,0.878-0.878c0.482,0,0.875,0.394,0.875,0.878C14.847,14.724,14.454,15.116,13.972,15.116z"></path>
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                    <?php
-                                        }
-                                    }
-                                    ?>
-                                </div>
-                                <button class="btn-next btn-next-slider<?php echo $BookType['Id'] ?>"><i class='fa fa-angle-right' aria-hidden='true'></i></button>
-                            </div>
-                            <div class="see-more">
-                                <a href="" title="xem tất cả">Xem tất cả</a>
-                            </div>
+                        <div class="button-cart" style="text-align: center;">
+                            <button class="button btn-checkout">
+                                <span>Thanh toán</span>
+                            </button>
                         </div>
                     </div>
                 </div>
-            </section>
-        <?php
-        }
-        ?>
+            </div>
+        </div>
     </div>
-
 
     <footer class="footer">
         <div class="mid-footer">
@@ -401,11 +329,12 @@ $lst_bv = DP::run_query($query, $parameters, $resultType);
                         <a href="" class="logo-ft" title="logo">
                             <img src="img/logo-bookstore.jpg" alt="Logo">
                         </a>
-                        <div class="content-ft">                           
-                        Edubook là cửa hàng luôn cung cấp cho các bạn tìm tòi tri thức, đam mê 
-                            đọc sách trên khắp cả nước.Chúng tôi sẽ liên tục cập 
-                            nhật những cuốn sách hay nhất, mới nhất, chất lượng nhất 
-                            giúp người đọc có những cuốn sách hay nhất để đọc!</div>
+                        <div class="content-ft">
+                            Edubook là cửa hàng luôn cung cấp cho các bạn tìm tòi tri thức, đam mê
+                            đọc sách trên khắp cả nước.Chúng tôi sẽ liên tục cập
+                            nhật những cuốn sách hay nhất, mới nhất, chất lượng nhất
+                            giúp người đọc có những cuốn sách hay nhất để đọc!
+                        </div>
                         <h4 class="title-menu">Hình thức thanh toán</h4>
                         <ul class="Pay">
                             <li><img style="width: 50px; height: 30px;" src="img/payment_1.webp" alt=""></li>
@@ -527,173 +456,53 @@ $lst_bv = DP::run_query($query, $parameters, $resultType);
 
     </footer>
 
-    <script src="https://cdn.babylonjs.com/babylon.js"></script>
-    <script src="vendor/babylon/babylonjs.loaders.min.js"></script>
     <script src="vendor/jquery-3.6.0.min.js"></script>
     <script src="vendor/sclick/js/slick.min.js"></script>
     <script src="vendor/bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
     <script src="vendor/fontawesome/js/all.min.js"></script>
     <script src="js/layout.js"></script>
-    <script src="js/index.js"></script>
-    
-
-
     <script>
-        window.addEventListener('DOMContentLoaded', function() {
-            var canvas = document.getElementById('Book-index');
-            var engine = new BABYLON.Engine(canvas, true);
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxAll = document.getElementById('checkbox-all-products');
+            const checkboxes = document.querySelectorAll('.checkbox-add-cart');
+            const totalPriceElement = document.getElementById('total-price');
 
-            // Create scene
-            var scene = new BABYLON.Scene(engine);
-
-            // Set background color
-            scene.clearColor = new BABYLON.Color3(0, 0.749, 0.984);
-
-            // Create camera
-            var camera = new BABYLON.ArcRotateCamera('camera', Math.PI, Math.PI / 3, 10, BABYLON.Vector3.Zero(), scene);
-            camera.attachControl(canvas, true);
-            camera.wheelPrecision = 30; // Adjust zoom speed
-
-            // Set minZ and maxZ values
-            camera.minZ = 0.1; // Minimum distance the camera can show
-            camera.maxZ = 100; // Maximum distance the camera can show
-
-            // Prevent default browser action on canvas scroll
-            canvas.addEventListener('wheel', function(event) {
-                event.preventDefault();
-            }, {
-                passive: false
-            });
-
-            // Create light
-            var light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), scene);
-
-            var model;
-            var isUserInteracting = false; // Flag to track user interaction
-
-            // Load model from Blender
-            BABYLON.SceneLoader.ImportMesh('', '', 'Model/BookImage.gltf', scene, function(meshes) {
-                // Meshes is an array containing the meshes in the model
-                // You can perform other operations on the meshes here
-
-                // Resize the model
-                model = meshes[0];
-                model.scaling = new BABYLON.Vector3(2.5, 2.5, 2.5);
-                model.position = new BABYLON.Vector3(0, -4, 0);
-
-                // Start the render loop after the model is loaded
-                engine.runRenderLoop(function() {
-                    scene.render();
-                });
-            });
-
-            // Handle window resize events
-            window.addEventListener('resize', function() {
-                engine.resize();
-            });
-
-        });
-
-
-        <?php
-        foreach ($bookTypeIds as $key => $BookType) {
-        ?>
-
-            $('.slick-slider<?php echo $BookType['Id'] ?>').slick({
-                dots: false,
-                infinite: true,
-                speed: 300,
-
-                slidesToShow: 4,
-                slidesToScroll: 1,
-                prevArrow: '.btn-pre-slider<?php echo $BookType['Id'] ?>',
-                nextArrow: '.btn-next-slider<?php echo $BookType['Id'] ?>',
-                responsive: [{
-                        breakpoint: 1024,
-                        settings: {
-                            slidesToShow: 2,
-                            slidesToScroll: 3,
-                            infinite: true,
-                        }
-                    },
-                    {
-                        breakpoint: 600,
-                        settings: {
-                            slidesToShow: 2,
-                            slidesToScroll: 2
-                        }
-                    },
-                    {
-                        breakpoint: 480,
-                        settings: {
-                            slidesToShow: 2,
-                            slidesToScroll: 1
-                        }
+            function updateTotalPrice() {
+                let totalPrice = 0;
+                checkboxes.forEach(function(checkbox) {
+                    if (checkbox.checked) {
+                        const price = parseInt(checkbox.getAttribute('data-price'));
+                        totalPrice += price;
                     }
-                ]
-            });
-        <?php
-        }
-        ?>
-    </script>
-    <!-- <?php
-            foreach ($bookTypeIds as $key => $BookType) {
-            ?>
-        <script>
-            window.addEventListener('DOMContentLoaded', function() {
-                var canvas = document.getElementById('<?php echo $BookType['Name'] ?>');
-                var engine = new BABYLON.Engine(canvas, true);
-
-                // Tạo scene
-                var scene = new BABYLON.Scene(engine);
-
-                // Đặt màu nền
-                scene.clearColor = new BABYLON.Color3(0, 0.749, 0.984);
-
-                // Tạo camera
-                var camera = new BABYLON.ArcRotateCamera('camera', Math.PI, Math.PI / 3, 10, BABYLON.Vector3.Zero(), scene);
-                camera.attachControl(canvas, true);
-                camera.wheelPrecision = 1; // Điều chỉnh tốc độ zoom
-
-                // Thiết lập giá trị minZ và maxZ
-                camera.minZ = 0.1; // Khoảng cách gần nhất mà camera có thể hiển thị
-                camera.maxZ = 10000; // Khoảng cách xa nhất mà camera có thể hiển thị
-
-
-                // Ngăn chặn hành động mặc định của trình duyệt khi cuộn trên thẻ canvas
-                canvas.addEventListener('wheel', function(event) {
-                    event.preventDefault();
-                }, {
-                    passive: false
                 });
-
-                // Tạo ánh sáng
-                var light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), scene);
-
-                // Tải mô hình từ Blender
-                BABYLON.SceneLoader.ImportMesh('', '', 'Model/demoCar.gltf', scene, function(meshes) {
-                    // Meshes là một mảng chứa các mesh trong mô hình
-                    // Bạn có thể thực hiện các thao tác khác trên các mesh ở đây
-
-                    // Chỉnh kích thước mô hình
-                    var model = meshes[0];
-                    model.scaling = new BABYLON.Vector3(0.03, 0.03, 0.03);
-                    model.position = new BABYLON.Vector3(0, -1, 0);
-                    // Chạy vòng lặp chính
-                    engine.runRenderLoop(function() {
-                        scene.render();
-                    });
-                });
-
-                // Xử lý sự kiện khi cửa sổ trình duyệt thay đổi kích thước
-                window.addEventListener('resize', function() {
-                    engine.resize();
-                });
-            });
-        </script>
-    <?php
+                totalPriceElement.textContent = totalPrice.toLocaleString('vi-VN') + '.000 đ';
             }
-    ?> -->
+
+            checkboxAll.addEventListener('change', function() {
+                checkboxes.forEach(function(checkbox) {
+                    checkbox.checked = checkboxAll.checked;
+                });
+                updateTotalPrice();
+            });
+
+            checkboxes.forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    updateTotalPrice();
+                    if (!checkbox.checked) {
+                        checkboxAll.checked = false;
+                    } else {
+                        const allChecked = Array.from(checkboxes).every(function(cb) {
+                            return cb.checked;
+                        });
+                        checkboxAll.checked = allChecked;
+                    }
+                });
+            });
+
+            updateTotalPrice(); // Cập nhật giá trị ban đầu khi trang được tải
+        });
+    </script>
+
 </body>
 
 </html>
