@@ -4,7 +4,26 @@
     object-fit: cover;
 }
 
-
+.input-container {
+    position: relative;
+}
+.input-container input {
+    width: 100%;
+    padding-right: 40px; /* Đảm bảo khoảng trống cho nút kính lúp */
+}
+.input-container button {
+    position: absolute;
+    right: 10px; /* Điều chỉnh khoảng cách từ nút đến mép phải của container */
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+    color: #09bfff;
+    cursor: pointer;
+}
+.input-container button i {
+    font-size: 1.2rem;
+}
 
 .slider_1 {
     display: block;

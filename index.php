@@ -6,7 +6,7 @@ require_once('layout.php');
 // Kiểm tra trạng thái đăng nhập
 
 $parameters = []; // Các tham số truy vấn (nếu có)
-$resultType = 2; // Loại kết quả truy vấn (2: Fetch All)
+$ketquaType = 2; // Loại kết quả truy vấn (2: Fetch All)
 // Kết nối đến cơ sở dữ liệu và thực hiện truy vấn
 $query = "SELECT 
 b.Id,
@@ -30,7 +30,7 @@ i.Id = (
 ";
 
 
-$lst_bv = DP::run_query($query, $parameters, $resultType);
+$lst_bv = DP::run_query($query, $parameters, $ketquaType);
 
 
 
@@ -48,6 +48,13 @@ $lst_bv = DP::run_query($query, $parameters, $resultType);
     <link rel="stylesheet" href="vendor/bootstrap-5.3.3-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="vendor/sclick/css/slick.min.css">
+    <script>
+        function toggleButton() {
+            const input = document.getElementById('timkiem');
+            const button = document.getElementById('btn');
+            button.disabled = input.value.trim() === '';
+        }
+    </script>
 </head>
 
 <body>
@@ -63,11 +70,32 @@ $lst_bv = DP::run_query($query, $parameters, $resultType);
                         <img class="Logo-header" src="img/logo-bookstore.jpg" alt="Logo">
                     </a>
                 </div>
-                <div class="col-lg-4 search-header">
+                <form class="col-lg-4 search-header" method="get" action="SearchResult.php">
                     <div class="InputContainer">
-                        <input placeholder="Search.." id="input" class="input" name="text" type="text">
+                        <input placeholder="Search.." id="timkiem" class="input" name="timkiem" type="text" onkeyup="toggleButton()">
+                        <button class="btn btn-search" style="border-color: #fff; border-radius: 25px; margin: 13px; color: #09bfff;" type="submit" id="btn" name="btn" disabled>
+                            <i class="fa fa-search"></i>
+                        </button>
                     </div>
-                </div>
+                </form>
+
+                <?php
+                if (isset($_GET['btn']) && isset($_GET['timkiem'])) {
+                    $noidung = $_GET['timkiem'];
+                } else {
+                    $noidung = false;
+                }
+                if ($noidung) {
+                    include "connect.php";
+
+                    $sql = "SELECT * FROM book WHERE Name LIKE '%$noidung%' ";
+                    $ketqua = mysqli_query($conn, $sql);
+
+                    while ($row = mysqli_fetch_array($ketqua)) {
+                        echo $row['Name'] . '<br>';
+                    }
+                }
+                ?>
                 <div class="col-lg-5 header-control">
                     <ul class="ul-control">
                         <div aria-label="Orange and tan hamster running in a metal wheel" role="img" class="wheel-and-hamster">
@@ -95,15 +123,15 @@ $lst_bv = DP::run_query($query, $parameters, $resultType);
                             <a href="cart.php">
                                 <i style="width: 25px; height: 25px; color: #000;" class="fa-solid fa-cart-shopping"></i>
                             </a>
-                            
+
                         </li>
                         <li class="header-account d-n">
                             <i style="width: 25px; height: 25px; color: #000;" class="fa-regular fa-user"></i>
                             <ul class="Show-account">
-                            <?php
-                                        if (isset($_SESSION['email'])) {
-                                            // Người dùng đã đăng nhập
-                                            echo '
+                                <?php
+                                if (isset($_SESSION['email'])) {
+                                    // Người dùng đã đăng nhập
+                                    echo '
                                             <li>
                                                 <a href="">Cá nhân</a>
                                             </li>
@@ -116,9 +144,9 @@ $lst_bv = DP::run_query($query, $parameters, $resultType);
                                             <li>
                                                 <a href="?logout=true">Logout</a>
                                             </li>';
-                                        } else {
-                                            // Người dùng chưa đăng nhập
-                                            echo '
+                                } else {
+                                    // Người dùng chưa đăng nhập
+                                    echo '
                                             <li>
                                                 <a href="Login.php">Login</a>
                                             </li>
@@ -126,8 +154,8 @@ $lst_bv = DP::run_query($query, $parameters, $resultType);
                                                 <a href="Register.php">Register</a>
                                             </li>
                                             ';
-                                        }
-                                    ?>
+                                }
+                                ?>
                             </ul>
                         </li>
                     </ul>
@@ -145,9 +173,9 @@ $lst_bv = DP::run_query($query, $parameters, $resultType);
                             <li class="d-lg-none d-block account-mb">
                                 <ul>
                                     <?php
-                                        if (isset($_SESSION['user'])) {
-                                            // Người dùng đã đăng nhập
-                                            echo '
+                                    if (isset($_SESSION['user'])) {
+                                        // Người dùng đã đăng nhập
+                                        echo '
                                             <li>
                                                 <a href="">Cá nhân</a>
                                             </li>
@@ -162,9 +190,9 @@ $lst_bv = DP::run_query($query, $parameters, $resultType);
                                                     <input type="submit" name="logout" value="Logout">
                                                 </form>
                                             </li>';
-                                        } else {
-                                            // Người dùng chưa đăng nhập
-                                            echo '
+                                    } else {
+                                        // Người dùng chưa đăng nhập
+                                        echo '
                                             <li>
                                                 <a href="Login.php">Login</a>
                                             </li>
@@ -172,9 +200,9 @@ $lst_bv = DP::run_query($query, $parameters, $resultType);
                                                 <a href="Register.php">Register</a>
                                             </li>
                                             ';
-                                        }
+                                    }
                                     ?>
-                                    
+
                                 </ul>
                             </li>
                             <li class="d-block d-lg-none title-danhmuc">
@@ -292,7 +320,7 @@ $lst_bv = DP::run_query($query, $parameters, $resultType);
                         foreach ($lst_bv as $key => $bv) {
                             if ($bv['TypeId'] == 7) {
                         ?>
-                                <div class="swiper-slider" >
+                                <div class="swiper-slider">
                                     <div class="card">
                                         <a href="Book.php?id=<?php echo $bv['Id']; ?>" class="card-img" title="<?php echo $bv['BookName']; ?>">
                                             <img src="img/products/<?php echo $bv['Path'] ?>" alt="">
@@ -311,7 +339,7 @@ $lst_bv = DP::run_query($query, $parameters, $resultType);
                                             </div>
                                         </div>
                                     </div>
-                            </div>
+                                </div>
                         <?php
                             }
                         }
@@ -357,7 +385,7 @@ $lst_bv = DP::run_query($query, $parameters, $resultType);
                                                 <div class="card">
                                                     <a href="Book.php?id=<?php echo $bv['Id'] ?>" class="card-img">
                                                         <img src="img/Products/<?php echo $bv['Path'] ?>" alt="">
-                                                     </a>
+                                                    </a>
                                                     <a class="card-info" href="Book.php?id=<?php echo $bv['Id'] ?>">
                                                         <p class="text-title"><?php echo $bv['BookName'] ?></p>
                                                     </a>
@@ -401,10 +429,10 @@ $lst_bv = DP::run_query($query, $parameters, $resultType);
                         <a href="" class="logo-ft" title="logo">
                             <img src="img/logo-bookstore.jpg" alt="Logo">
                         </a>
-                        <div class="content-ft">                           
-                        Edubook là cửa hàng luôn cung cấp cho các bạn tìm tòi tri thức, đam mê 
-                            đọc sách trên khắp cả nước.Chúng tôi sẽ liên tục cập 
-                            nhật những cuốn sách hay nhất, mới nhất, chất lượng nhất 
+                        <div class="content-ft">
+                            Edubook là cửa hàng luôn cung cấp cho các bạn tìm tòi tri thức, đam mê
+                            đọc sách trên khắp cả nước.Chúng tôi sẽ liên tục cập
+                            nhật những cuốn sách hay nhất, mới nhất, chất lượng nhất
                             giúp người đọc có những cuốn sách hay nhất để đọc!</div>
                         <h4 class="title-menu">Hình thức thanh toán</h4>
                         <ul class="Pay">
@@ -535,7 +563,7 @@ $lst_bv = DP::run_query($query, $parameters, $resultType);
     <script src="vendor/fontawesome/js/all.min.js"></script>
     <script src="js/layout.js"></script>
     <script src="js/index.js"></script>
-    
+
 
 
     <script>
