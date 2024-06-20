@@ -434,34 +434,38 @@ foreach ($bookTypeIds as $bookType) {
                                 $noidung = $_GET['timkiem'];
 
                                 $tukhoa = explode(' ', $noidung);
-
-                                include "connect.php";
-
-                                $sql = " SELECT book.Name, book.Price, image.Path 
-                                FROM book 
-                                JOIN image ON book.ID = image.BookID 
-                                WHERE ";
+                                $sql =
+                                "SELECT b.Name, b.Price, i.Path 
+                                        FROM book b
+                                        JOIN image i ON b.ID = i.BookID 
+                                        WHERE 
+                                        i.Id = (
+                                            SELECT MIN(i2.Id)
+                                            FROM `image` i2
+                                            WHERE i2.BookId = b.Id
+                                        )";
 
                                 $conditions = [];
-                                foreach ($tukhoa as $keyword) {
-                                    $conditions[] = "book.Name LIKE '%" . mysqli_real_escape_string($conn, $keyword) . "%'";
+                                $placeholders = [];
+                                foreach ($tukhoa as $index => $keyword) {
+                                    $conditions[] = "AND b.Name LIKE ?";
+                                    $placeholders[] = "%$keyword%";
                                 }
-                                $sql .= implode(' AND ', $conditions);
-
-                                $ketqua = mysqli_query($conn, $sql);
-                                $dem_sl = mysqli_num_rows($ketqua);
-                                echo "<h6>KẾT QUẢ TÌM KIẾM: " . "(" ."$dem_sl sản phẩm" .")"."</h6>";
-
-                                if (mysqli_num_rows($ketqua) > 0) {
-                                    while ($row = mysqli_fetch_array($ketqua)) {
-                            ?>
+                                
+                                $sql .= implode(" OR ", $conditions);
+                                
+                                $ketqua = DP::run_query($sql, $placeholders, $resultType);
+                               
+                                foreach ($ketqua as $key => $lst_search)
+                                {
+                                ?>
                                         <div class="product__panel-item col-lg-3 col-md-4 col-sm-6">
                                             <div class="product__panel-item-wrap">
                                                 <div class="product__panel-img-wrap">
-                                                    <img src="img/Products/<?php echo $row['Path']; ?>" alt="" class="product__panel-img">
+                                                    <img src="img/Products/<?php echo $lst_search['Path']; ?>" alt="" class="product__panel-img">
                                                 </div>
                                                 <div class="product__panel-heading">
-                                                    <a href="product.html" class="product__panel-link"><?php echo $row['Name']; ?></a>
+                                                    <a href="product.html" class="product__panel-link"><?php echo $lst_search['Name']; ?></a>
                                                 </div>
                                                 <div class="product__panel-rate-wrap">
                                                     <i class="fas fa-star product__panel-rate"></i>
@@ -472,16 +476,15 @@ foreach ($bookTypeIds as $bookType) {
                                                 </div>
                                                 <div class="product__panel-price">
                                                     <span class="product__panel-price-current">
-                                                        <?php echo $row['Price']; ?> đ
+                                                        <?php echo $lst_search['Price']; ?> đ
                                                     </span>
                                                 </div>
                                             </div>
                                         </div>
-                            <?php
-                                    }
-                                } 
-                            } 
-                            ?>
+                                    <?php
+                                            }
+                                        }
+                                    ?>
                         </div>
                     </div>
 

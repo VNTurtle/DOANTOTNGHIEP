@@ -6,7 +6,7 @@ require_once('layout.php');
 // Kiểm tra trạng thái đăng nhập
 
 $parameters = []; // Các tham số truy vấn (nếu có)
-$ketquaType = 2; // Loại kết quả truy vấn (2: Fetch All)
+$resultType = 2; // Loại kết quả truy vấn (2: Fetch All)
 // Kết nối đến cơ sở dữ liệu và thực hiện truy vấn
 $query = "SELECT 
 b.Id,
@@ -30,7 +30,7 @@ i.Id = (
 ";
 
 
-$lst_bv = DP::run_query($query, $parameters, $ketquaType);
+$lst_bv = DP::run_query($query, $parameters, $resultType);
 
 
 
@@ -78,7 +78,6 @@ $lst_bv = DP::run_query($query, $parameters, $ketquaType);
                         </button>
                     </div>
                 </form>
-
                 <?php
                 if (isset($_GET['btn']) && isset($_GET['timkiem'])) {
                     $noidung = $_GET['timkiem'];
@@ -86,36 +85,16 @@ $lst_bv = DP::run_query($query, $parameters, $ketquaType);
                     $noidung = false;
                 }
                 if ($noidung) {
-                    include "connect.php";
 
-                    $sql = "SELECT * FROM book WHERE Name LIKE '%$noidung%' ";
-                    $ketqua = mysqli_query($conn, $sql);
+                    $querySearch = "SELECT * FROM book WHERE Name LIKE '%$noidung%' ";
+                    $ketqua = DP::run_query($querySearch,$parameters,$resultType);
 
-                    while ($row = mysqli_fetch_array($ketqua)) {
-                        echo $row['Name'] . '<br>';
-                    }
+                    
                 }
                 ?>
                 <div class="col-lg-5 header-control">
                     <ul class="ul-control">
-                        <div aria-label="Orange and tan hamster running in a metal wheel" role="img" class="wheel-and-hamster">
-                            <div class="wheel"></div>
-                            <div class="hamster">
-                                <div class="hamster__body">
-                                    <div class="hamster__head">
-                                        <div class="hamster__ear"></div>
-                                        <div class="hamster__eye"></div>
-                                        <div class="hamster__nose"></div>
-                                    </div>
-                                    <div class="hamster__limb hamster__limb--fr"></div>
-                                    <div class="hamster__limb hamster__limb--fl"></div>
-                                    <div class="hamster__limb hamster__limb--br"></div>
-                                    <div class="hamster__limb hamster__limb--bl"></div>
-                                    <div class="hamster__tail"></div>
-                                </div>
-                            </div>
-                            <div class="spoke"></div>
-                        </div>
+
                         <li class="header-favourite d-n">
                             <i style="width: 25px; height: 25px;" class="fa-solid fa-heart"></i>
                         </li>
@@ -166,7 +145,7 @@ $lst_bv = DP::run_query($query, $parameters, $ketquaType);
                     <nav class="header-nav">
                         <ul class="item-big">
                             <li>
-                                <a href="/" class="logo-sitenav d-block d-lg-none">
+                                <a href="index.php" class="logo-sitenav d-block d-lg-none">
                                     <img src="img/logo-bookstore.jpg" width="172" height="50" alt="">
                                 </a>
                             </li>
@@ -209,7 +188,7 @@ $lst_bv = DP::run_query($query, $parameters, $ketquaType);
                                 <span>Menu chính</span>
                             </li>
                             <li class="nav-item">
-                                <a href="/">
+                                <a href="index.php">
                                     <i class="fa-solid fa-house"></i>
                                     Trang chủ
                                 </a>
@@ -329,7 +308,7 @@ $lst_bv = DP::run_query($query, $parameters, $ketquaType);
                                             <p class="text-title" title="<?php echo $bv['BookName']; ?>"><?php echo $bv['BookName']; ?> </p>
                                         </a>
                                         <div class="card-footer">
-                                            <span class="text-title">$<?php echo $bv['Price'] ?></span>
+                                            <span class="text-title"><?php echo $bv['Price'] ?> Đ</span>
                                             <div class="card-button">
                                                 <svg class="svg-icon" viewBox="0 0 20 20">
                                                     <path d="M17.72,5.011H8.026c-0.271,0-0.49,0.219-0.49,0.489c0,0.271,0.219,0.489,0.49,0.489h8.962l-1.979,4.773H6.763L4.935,5.343C4.926,5.316,4.897,5.309,4.884,5.286c-0.011-0.024,0-0.051-0.017-0.074C4.833,5.166,4.025,4.081,2.33,3.908C2.068,3.883,1.822,4.075,1.795,4.344C1.767,4.612,1.962,4.853,2.231,4.88c1.143,0.118,1.703,0.738,1.808,0.866l1.91,5.661c0.066,0.199,0.252,0.333,0.463,0.333h8.924c0.116,0,0.22-0.053,0.308-0.128c0.027-0.023,0.042-0.048,0.063-0.076c0.026-0.034,0.063-0.058,0.08-0.099l2.384-5.75c0.062-0.151,0.046-0.323-0.045-0.458C18.036,5.092,17.883,5.011,17.72,5.011z"></path>
@@ -352,13 +331,13 @@ $lst_bv = DP::run_query($query, $parameters, $ketquaType);
         <?php
         foreach ($bookTypeIds as $key => $BookType) {
         ?>
-            <!-- <section class="section-1-banner">
+            <section class="section-1-banner">
                 <div class="container">
                     <a class="image-effect" href="">
                         <img width="1920" height="500" src="img/banner/muonkiepnhansinh_resize_920x420.jpg" alt="">
                     </a>
                 </div>
-            </section> -->
+            </section>
             <section class="section-product section-product1">
                 <div class="container">
                     <div class="row">
@@ -383,14 +362,14 @@ $lst_bv = DP::run_query($query, $parameters, $ketquaType);
                                     ?>
                                             <div class="swiper-slider">
                                                 <div class="card">
-                                                    <a href="Book.php?id=<?php echo $bv['Id'] ?>" class="card-img">
+                                                    <a href="Book.php?id=<?php echo $bv['Id'] ?>" class="card-img" title="<?php echo $bv['BookName'] ?>">
                                                         <img src="img/Products/<?php echo $bv['Path'] ?>" alt="">
                                                     </a>
-                                                    <a class="card-info" href="Book.php?id=<?php echo $bv['Id'] ?>">
+                                                    <a class="card-info" href="Book.php?id=<?php echo $bv['Id'] ?>" title="<?php echo $bv['BookName'] ?>">
                                                         <p class="text-title"><?php echo $bv['BookName'] ?></p>
                                                     </a>
                                                     <div class="card-footer">
-                                                        <span class="text-title">$<?php echo $bv['Price'] ?></span>
+                                                        <span class="text-title"><?php echo $bv['Price'] ?> Đ</span>
                                                         <div class="card-button">
                                                             <svg class="svg-icon" viewBox="0 0 20 20">
                                                                 <path d="M17.72,5.011H8.026c-0.271,0-0.49,0.219-0.49,0.489c0,0.271,0.219,0.489,0.49,0.489h8.962l-1.979,4.773H6.763L4.935,5.343C4.926,5.316,4.897,5.309,4.884,5.286c-0.011-0.024,0-0.051-0.017-0.074C4.833,5.166,4.025,4.081,2.33,3.908C2.068,3.883,1.822,4.075,1.795,4.344C1.767,4.612,1.962,4.853,2.231,4.88c1.143,0.118,1.703,0.738,1.808,0.866l1.91,5.661c0.066,0.199,0.252,0.333,0.463,0.333h8.924c0.116,0,0.22-0.053,0.308-0.128c0.027-0.023,0.042-0.048,0.063-0.076c0.026-0.034,0.063-0.058,0.08-0.099l2.384-5.75c0.062-0.151,0.046-0.323-0.045-0.458C18.036,5.092,17.883,5.011,17.72,5.011z"></path>
@@ -530,23 +509,41 @@ $lst_bv = DP::run_query($query, $parameters, $ketquaType);
                         </div>
                     </div>
                     <div class="col-12 col-md-6 col-lg-3">
-                        <div aria-label="Orange and tan hamster running in a metal wheel" role="img" class="wheel-and-hamster">
-                            <div class="wheel"></div>
-                            <div class="hamster">
-                                <div class="hamster__body">
-                                    <div class="hamster__head">
-                                        <div class="hamster__ear"></div>
-                                        <div class="hamster__eye"></div>
-                                        <div class="hamster__nose"></div>
-                                    </div>
-                                    <div class="hamster__limb hamster__limb--fr"></div>
-                                    <div class="hamster__limb hamster__limb--fl"></div>
-                                    <div class="hamster__limb hamster__limb--br"></div>
-                                    <div class="hamster__limb hamster__limb--bl"></div>
-                                    <div class="hamster__tail"></div>
-                                </div>
+                        <div class="loader">
+                            <div>
+                                <ul>
+                                    <li>
+                                        <svg fill="currentColor" viewBox="0 0 90 120">
+                                            <path d="M90,0 L90,120 L11,120 C4.92486775,120 0,115.075132 0,109 L0,11 C0,4.92486775 4.92486775,0 11,0 L90,0 Z M71.5,81 L18.5,81 C17.1192881,81 16,82.1192881 16,83.5 C16,84.8254834 17.0315359,85.9100387 18.3356243,85.9946823 L18.5,86 L71.5,86 C72.8807119,86 74,84.8807119 74,83.5 C74,82.1745166 72.9684641,81.0899613 71.6643757,81.0053177 L71.5,81 Z M71.5,57 L18.5,57 C17.1192881,57 16,58.1192881 16,59.5 C16,60.8254834 17.0315359,61.9100387 18.3356243,61.9946823 L18.5,62 L71.5,62 C72.8807119,62 74,60.8807119 74,59.5 C74,58.1192881 72.8807119,57 71.5,57 Z M71.5,33 L18.5,33 C17.1192881,33 16,34.1192881 16,35.5 C16,36.8254834 17.0315359,37.9100387 18.3356243,37.9946823 L18.5,38 L71.5,38 C72.8807119,38 74,36.8807119 74,35.5 C74,34.1192881 72.8807119,33 71.5,33 Z"></path>
+                                        </svg>
+                                    </li>
+                                    <li>
+                                        <svg fill="currentColor" viewBox="0 0 90 120">
+                                            <path d="M90,0 L90,120 L11,120 C4.92486775,120 0,115.075132 0,109 L0,11 C0,4.92486775 4.92486775,0 11,0 L90,0 Z M71.5,81 L18.5,81 C17.1192881,81 16,82.1192881 16,83.5 C16,84.8254834 17.0315359,85.9100387 18.3356243,85.9946823 L18.5,86 L71.5,86 C72.8807119,86 74,84.8807119 74,83.5 C74,82.1745166 72.9684641,81.0899613 71.6643757,81.0053177 L71.5,81 Z M71.5,57 L18.5,57 C17.1192881,57 16,58.1192881 16,59.5 C16,60.8254834 17.0315359,61.9100387 18.3356243,61.9946823 L18.5,62 L71.5,62 C72.8807119,62 74,60.8807119 74,59.5 C74,58.1192881 72.8807119,57 71.5,57 Z M71.5,33 L18.5,33 C17.1192881,33 16,34.1192881 16,35.5 C16,36.8254834 17.0315359,37.9100387 18.3356243,37.9946823 L18.5,38 L71.5,38 C72.8807119,38 74,36.8807119 74,35.5 C74,34.1192881 72.8807119,33 71.5,33 Z"></path>
+                                        </svg>
+                                    </li>
+                                    <li>
+                                        <svg fill="currentColor" viewBox="0 0 90 120">
+                                            <path d="M90,0 L90,120 L11,120 C4.92486775,120 0,115.075132 0,109 L0,11 C0,4.92486775 4.92486775,0 11,0 L90,0 Z M71.5,81 L18.5,81 C17.1192881,81 16,82.1192881 16,83.5 C16,84.8254834 17.0315359,85.9100387 18.3356243,85.9946823 L18.5,86 L71.5,86 C72.8807119,86 74,84.8807119 74,83.5 C74,82.1745166 72.9684641,81.0899613 71.6643757,81.0053177 L71.5,81 Z M71.5,57 L18.5,57 C17.1192881,57 16,58.1192881 16,59.5 C16,60.8254834 17.0315359,61.9100387 18.3356243,61.9946823 L18.5,62 L71.5,62 C72.8807119,62 74,60.8807119 74,59.5 C74,58.1192881 72.8807119,57 71.5,57 Z M71.5,33 L18.5,33 C17.1192881,33 16,34.1192881 16,35.5 C16,36.8254834 17.0315359,37.9100387 18.3356243,37.9946823 L18.5,38 L71.5,38 C72.8807119,38 74,36.8807119 74,35.5 C74,34.1192881 72.8807119,33 71.5,33 Z"></path>
+                                        </svg>
+                                    </li>
+                                    <li>
+                                        <svg fill="currentColor" viewBox="0 0 90 120">
+                                            <path d="M90,0 L90,120 L11,120 C4.92486775,120 0,115.075132 0,109 L0,11 C0,4.92486775 4.92486775,0 11,0 L90,0 Z M71.5,81 L18.5,81 C17.1192881,81 16,82.1192881 16,83.5 C16,84.8254834 17.0315359,85.9100387 18.3356243,85.9946823 L18.5,86 L71.5,86 C72.8807119,86 74,84.8807119 74,83.5 C74,82.1745166 72.9684641,81.0899613 71.6643757,81.0053177 L71.5,81 Z M71.5,57 L18.5,57 C17.1192881,57 16,58.1192881 16,59.5 C16,60.8254834 17.0315359,61.9100387 18.3356243,61.9946823 L18.5,62 L71.5,62 C72.8807119,62 74,60.8807119 74,59.5 C74,58.1192881 72.8807119,57 71.5,57 Z M71.5,33 L18.5,33 C17.1192881,33 16,34.1192881 16,35.5 C16,36.8254834 17.0315359,37.9100387 18.3356243,37.9946823 L18.5,38 L71.5,38 C72.8807119,38 74,36.8807119 74,35.5 C74,34.1192881 72.8807119,33 71.5,33 Z"></path>
+                                        </svg>
+                                    </li>
+                                    <li>
+                                        <svg fill="currentColor" viewBox="0 0 90 120">
+                                            <path d="M90,0 L90,120 L11,120 C4.92486775,120 0,115.075132 0,109 L0,11 C0,4.92486775 4.92486775,0 11,0 L90,0 Z M71.5,81 L18.5,81 C17.1192881,81 16,82.1192881 16,83.5 C16,84.8254834 17.0315359,85.9100387 18.3356243,85.9946823 L18.5,86 L71.5,86 C72.8807119,86 74,84.8807119 74,83.5 C74,82.1745166 72.9684641,81.0899613 71.6643757,81.0053177 L71.5,81 Z M71.5,57 L18.5,57 C17.1192881,57 16,58.1192881 16,59.5 C16,60.8254834 17.0315359,61.9100387 18.3356243,61.9946823 L18.5,62 L71.5,62 C72.8807119,62 74,60.8807119 74,59.5 C74,58.1192881 72.8807119,57 71.5,57 Z M71.5,33 L18.5,33 C17.1192881,33 16,34.1192881 16,35.5 C16,36.8254834 17.0315359,37.9100387 18.3356243,37.9946823 L18.5,38 L71.5,38 C72.8807119,38 74,36.8807119 74,35.5 C74,34.1192881 72.8807119,33 71.5,33 Z"></path>
+                                        </svg>
+                                    </li>
+                                    <li>
+                                        <svg fill="currentColor" viewBox="0 0 90 120">
+                                            <path d="M90,0 L90,120 L11,120 C4.92486775,120 0,115.075132 0,109 L0,11 C0,4.92486775 4.92486775,0 11,0 L90,0 Z M71.5,81 L18.5,81 C17.1192881,81 16,82.1192881 16,83.5 C16,84.8254834 17.0315359,85.9100387 18.3356243,85.9946823 L18.5,86 L71.5,86 C72.8807119,86 74,84.8807119 74,83.5 C74,82.1745166 72.9684641,81.0899613 71.6643757,81.0053177 L71.5,81 Z M71.5,57 L18.5,57 C17.1192881,57 16,58.1192881 16,59.5 C16,60.8254834 17.0315359,61.9100387 18.3356243,61.9946823 L18.5,62 L71.5,62 C72.8807119,62 74,60.8807119 74,59.5 C74,58.1192881 72.8807119,57 71.5,57 Z M71.5,33 L18.5,33 C17.1192881,33 16,34.1192881 16,35.5 C16,36.8254834 17.0315359,37.9100387 18.3356243,37.9946823 L18.5,38 L71.5,38 C72.8807119,38 74,36.8807119 74,35.5 C74,34.1192881 72.8807119,33 71.5,33 Z"></path>
+                                        </svg>
+                                    </li>
+                                </ul>
                             </div>
-                            <div class="spoke"></div>
                         </div>
                     </div>
                 </div>
@@ -555,12 +552,13 @@ $lst_bv = DP::run_query($query, $parameters, $ketquaType);
 
     </footer>
 
-    <script src="https://cdn.babylonjs.com/babylon.js"></script>
-    <script src="vendor/babylon/babylonjs.loaders.min.js"></script>
+
     <script src="vendor/jquery-3.6.0.min.js"></script>
     <script src="vendor/sclick/js/slick.min.js"></script>
     <script src="vendor/bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
     <script src="vendor/fontawesome/js/all.min.js"></script>
+    <script src="vendor/babylon/babylon.js"></script>
+    <script src="vendor/babylon/babylonjs.loaders.min.js"></script>
     <script src="js/layout.js"></script>
     <script src="js/index.js"></script>
 
