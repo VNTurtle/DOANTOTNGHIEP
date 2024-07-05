@@ -431,62 +431,77 @@ foreach ($bookTypeIds as $bookType) {
                         <div class="row">
                             <?php
                             if (isset($_GET['timkiem'])) {
-                                $noidung = $_GET['timkiem'];
-
+                                $noidung = trim($_GET['timkiem']);
                                 $tukhoa = explode(' ', $noidung);
-                                $sql =
-                                "SELECT b.Name, b.Price, i.Path 
-                                        FROM book b
-                                        JOIN image i ON b.ID = i.BookID 
-                                        WHERE 
-                                        i.Id = (
-                                            SELECT MIN(i2.Id)
-                                            FROM `image` i2
-                                            WHERE i2.BookId = b.Id
-                                        )";
+
+                                // Khởi tạo câu lệnh SQL
+                                $sql = "
+                                    SELECT b.Name, b.Price, i.Path 
+                                    FROM book b
+                                    JOIN image i ON b.ID = i.BookID 
+                                    WHERE 
+                                    i.Id = (
+                                        SELECT MIN(i2.Id)
+                                        FROM `image` i2
+                                        WHERE i2.BookId = b.Id
+                                    )";
 
                                 $conditions = [];
                                 $placeholders = [];
                                 foreach ($tukhoa as $index => $keyword) {
-                                    $conditions[] = "AND b.Name LIKE ?";
+                                    $conditions[] = "b.Name LIKE ?";
                                     $placeholders[] = "%$keyword%";
                                 }
-                                
-                                $sql .= implode(" OR ", $conditions);
-                                
-                                $ketqua = DP::run_query($sql, $placeholders, $resultType);
-                               
-                                foreach ($ketqua as $key => $lst_search)
-                                {
-                                ?>
-                                        <div class="product__panel-item col-lg-3 col-md-4 col-sm-6">
-                                            <div class="product__panel-item-wrap">
-                                                <div class="product__panel-img-wrap">
-                                                    <img src="img/Products/<?php echo $lst_search['Path']; ?>" alt="" class="product__panel-img">
-                                                </div>
-                                                <div class="product__panel-heading">
-                                                    <a href="product.html" class="product__panel-link"><?php echo $lst_search['Name']; ?></a>
-                                                </div>
-                                                <div class="product__panel-rate-wrap">
-                                                    <i class="fas fa-star product__panel-rate"></i>
-                                                    <i class="fas fa-star product__panel-rate"></i>
-                                                    <i class="fas fa-star product__panel-rate"></i>
-                                                    <i class="fas fa-star product__panel-rate"></i>
-                                                    <i class="fas fa-star product__panel-rate"></i>
-                                                </div>
-                                                <div class="product__panel-price">
-                                                    <span class="product__panel-price-current">
-                                                        <?php echo $lst_search['Price']; ?> đ
-                                                    </span>
-                                                </div>
+
+                                if (!empty($conditions)) {
+                                    $sql .= " AND (" . implode(" OR ", $conditions) . ")";
+                                }
+
+
+                                $ketqua = DP::run_query($sql, $placeholders, PDO::FETCH_ASSOC);
+
+                                // Kiểm tra nếu truy vấn thành công
+
+
+                                $soluong = count($ketqua);
+
+                                echo "<h6> KẾT QUẢ TÌM KIẾM CHO: " . htmlspecialchars($noidung) . " (" . $soluong . " Kết quả) </h6>";
+
+
+
+                                foreach ($ketqua as $key => $lst_search) {
+                            ?>
+                                    <div class="product__panel-item col-lg-3 col-md-4 col-sm-6">
+                                        <div class="product__panel-item-wrap">
+                                            <div class="product__panel-img-wrap">
+                                                <img src="img/Products/<?php echo htmlspecialchars($lst_search['Path']); ?>" alt="" class="product__panel-img">
+                                            </div>
+                                            <div class="product__panel-heading">
+                                                <a href="product.html" class="product__panel-link"><?php echo htmlspecialchars($lst_search['Name']); ?></a>
+                                            </div>
+                                            <div class="product__panel-rate-wrap">
+                                                <i class="fas fa-star product__panel-rate"></i>
+                                                <i class="fas fa-star product__panel-rate"></i>
+                                                <i class="fas fa-star product__panel-rate"></i>
+                                                <i class="fas fa-star product__panel-rate"></i>
+                                                <i class="fas fa-star product__panel-rate"></i>
+                                            </div>
+                                            <div class="product__panel-price">
+                                                <span class="product__panel-price-current">
+                                                    <?php echo htmlspecialchars($lst_search['Price']); ?> đ
+                                                </span>
                                             </div>
                                         </div>
-                                    <?php
-                                            }
-                                        }
-                                    ?>
+                                    </div>
+                            <?php
+
+                                }
+                            }
+                            ?>
                         </div>
                     </div>
+
+
 
                 </div>
             </div>
